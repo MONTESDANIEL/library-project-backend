@@ -24,18 +24,17 @@ public class BookService {
     private final BookRepository bookRepository;
     private static final Logger logger = LoggerFactory.getLogger(BookService.class);
 
-    public ResponseEntity<?> listAllBooks() {
+    public ResponseEntity<ApiResponse<Iterable<Book>>> listAllBooks() {
         try {
             Iterable<Book> books = bookRepository.findAll();
             return createApiResponse(HttpStatus.OK, "Los libros fueron consultados con éxito.", books);
         } catch (Exception e) {
             e.printStackTrace();
-            return createApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error al intentar consultar los libros.",
-                    null);
+            return createApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error al intentar consultar los libros.", null);
         }
     }
 
-    public ResponseEntity<?> addBook(Book newBook) {
+    public ResponseEntity<ApiResponse<Book>> addBook(Book newBook) {
         try {
 
             newBook.setId(null);
@@ -55,9 +54,8 @@ public class BookService {
         }
     }
 
-    public ResponseEntity<?> updateBook(Book updateBook) {
+    public ResponseEntity<ApiResponse<Book>> updateBook(Book updateBook) {
         try {
-
             Book book = bookRepository.findById(updateBook.getId()).get();
 
             book.setTitle(updateBook.getTitle());
@@ -78,7 +76,7 @@ public class BookService {
         }
     }
 
-    public ResponseEntity<?> deleteBook(Long bookId) {
+    public ResponseEntity<ApiResponse<String>> deleteBook(Long bookId) {
         try {
             bookRepository.deleteById(bookId);
             return createApiResponse(HttpStatus.OK, "El libro fue eliminado con éxito.", null);
@@ -96,9 +94,9 @@ public class BookService {
         return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
     }
 
-    // Metodo para crear una respuesta con formato
-    private ResponseEntity<?> createApiResponse(HttpStatus status, String message, Object data) {
-        ApiResponse<Object> response = new ApiResponse<>(message, data);
+    // Metodo para crear una respuesta con formato generalizado
+    private <T> ResponseEntity<ApiResponse<T>> createApiResponse(HttpStatus status, String message, T data) {
+        ApiResponse<T> response = new ApiResponse<>(message, data);
         return ResponseEntity.status(status).body(response);
     }
 }

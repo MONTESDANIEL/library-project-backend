@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class LoanService {
     private final LoanRepository loanRepository;
 
     @Transactional
-    public ResponseEntity<?> createLoan(LoanDTO loanDTO) {
+    public ResponseEntity<ApiResponse<Book>> createLoan(LoanDTO loanDTO) {
         try {
             // Buscar libro
             Book book = bookRepository.findById(loanDTO.getBookId()).get();
@@ -74,10 +76,21 @@ public class LoanService {
         }
     }
 
-    public ResponseEntity<?> listLoans() {
+    // Cambiar el tipo de retorno a ResponseEntity<ApiResponse<List<LoanDTO>>>
+    public ResponseEntity<ApiResponse<List<LoanDTO>>> listLoans() {
         try {
+            List<Loan> loanList = StreamSupport.stream(loanRepository.findAll().spliterator(), false)
+                    .collect(Collectors.toList());
+
+            // Verificamos si la lista de préstamos está vacía
+            if (loanList.isEmpty()) {
+                return createApiResponse(HttpStatus.NO_CONTENT, "No hay préstamos disponibles.", null);
+            }
+
             List<LoanDTO> loans = new ArrayList<>();
-            for (Loan loan : loanRepository.findAll()) {
+
+            // Si hay préstamos, los procesamos
+            for (Loan loan : loanList) {
                 User user = userRepository.findById(loan.getUserId()).orElse(null);
                 Book book = bookRepository.findById(loan.getBookId()).orElse(null);
 
@@ -95,6 +108,7 @@ public class LoanService {
                     loans.add(loanDTO);
                 }
             }
+
             return createApiResponse(HttpStatus.OK, "Los préstamos fueron consultados con éxito.", loans);
         } catch (Exception e) {
             return createApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error al intentar consultar los préstamos.",
@@ -102,8 +116,9 @@ public class LoanService {
         }
     }
 
-    private ResponseEntity<?> createApiResponse(HttpStatus status, String message, Object data) {
-        ApiResponse<Object> response = new ApiResponse<>(message, data);
+    // Metodo para crear una respuesta con formato generalizado
+    private <T> ResponseEntity<ApiResponse<T>> createApiResponse(HttpStatus status, String message, T data) {
+        ApiResponse<T> response = new ApiResponse<>(message, data);
         return ResponseEntity.status(status).body(response);
     }
 
