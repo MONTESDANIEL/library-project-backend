@@ -5,8 +5,8 @@ USE library_db;
 -- Contiene la información de los usuarios que solicitan préstamos.
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
     cc VARCHAR(20) UNIQUE NOT NULL,
     numero VARCHAR(15),
     direccion VARCHAR(255),
@@ -18,9 +18,9 @@ CREATE TABLE users (
 -- Contiene los libros disponibles en la biblioteca.
 CREATE TABLE books (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(255) NOT NULL,
-    author VARCHAR(255) NOT NULL,
-    genre VARCHAR(100),
+    title VARCHAR(100) NOT NULL,
+    author VARCHAR(100) NOT NULL,
+    genre VARCHAR(50),
     availability BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
