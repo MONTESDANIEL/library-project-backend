@@ -16,18 +16,18 @@ public class Book {
 
     @NotBlank(message = "El título es obligatorio.")
     @Size(max = 50, message = "El título no puede tener más de 50 caracteres.")
-    @Pattern(regexp = "^[\\p{L}0-9\\s.,'-]+$", message = "El título no puede contener caracteres especiales.")
+    @Pattern(regexp = "^[\\p{L}0-9\\s.,'-áéíóúÁÉÍÓÚñÑ]+$", message = "El título no puede contener caracteres especiales.")
     @Column(nullable = false, length = 50)
     private String title;
 
     @NotBlank(message = "El autor es obligatorio.")
     @Size(max = 50, message = "El autor no puede tener más de 50 caracteres.")
-    @Pattern(regexp = "^[\\p{L}\\s.,'-]+$", message = "El nombre del autor no puede contener números.")
+    @Pattern(regexp = "^[\\p{L}\\s.,'-áéíóúÁÉÍÓÚñÑ]+$", message = "El nombre del autor no puede contener números.")
     @Column(nullable = false, length = 50)
     private String author;
 
     @Size(max = 50, message = "El género no puede tener más de 50 caracteres.")
-    @Pattern(regexp = "^[\\p{L}\\s]+$", message = "El género solo puede contener letras.")
+    @Pattern(regexp = "^[\\p{L}\\s,.áéíóúÁÉÍÓÚñÑ]+$", message = "El género solo puede contener letras.")
     @Column(length = 50)
     private String genre;
 

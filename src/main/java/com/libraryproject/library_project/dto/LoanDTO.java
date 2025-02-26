@@ -9,6 +9,8 @@ import java.time.LocalDate;
 @Data
 public class LoanDTO {
 
+    private Long loanId;
+
     @NotBlank(message = "El nombre del usuario es obligatorio")
     private String userName;
 

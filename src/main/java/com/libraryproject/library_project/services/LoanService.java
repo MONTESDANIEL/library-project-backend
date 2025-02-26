@@ -83,6 +83,7 @@ public class LoanService {
 
                 if (user != null && book != null) {
                     LoanDTO loanDTO = new LoanDTO();
+                    loanDTO.setLoanId(loan.getId());
                     loanDTO.setUserName(user.getName());
                     loanDTO.setUserEmail(user.getEmail());
                     loanDTO.setUserId(user.getId());
@@ -101,7 +102,6 @@ public class LoanService {
         }
     }
 
-    // Método para crear respuesta con formato API
     private ResponseEntity<?> createApiResponse(HttpStatus status, String message, Object data) {
         ApiResponse<Object> response = new ApiResponse<>(message, data);
         return ResponseEntity.status(status).body(response);

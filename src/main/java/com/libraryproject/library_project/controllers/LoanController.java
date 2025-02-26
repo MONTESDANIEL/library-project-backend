@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Loan", description = "Gestión de libros en la biblioteca")
 @RestController
-@RequestMapping("/api/Loan")
+@RequestMapping("/api/loan")
 @RequiredArgsConstructor
 public class LoanController {
 

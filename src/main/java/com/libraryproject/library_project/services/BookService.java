@@ -44,7 +44,7 @@ public class BookService {
             newBook.setGenre(capitalize(newBook.getGenre()));
 
             bookRepository.save(newBook);
-            return createApiResponse(HttpStatus.OK, "El libro fue agregado con éxito.", null);
+            return createApiResponse(HttpStatus.OK, "El libro fue agregado con éxito.", newBook);
 
         } catch (DataIntegrityViolationException e) {
             logger.warn("Intento de agregar un libro duplicado: {} - {}", newBook.getTitle(), newBook.getAuthor());
@@ -67,7 +67,7 @@ public class BookService {
 
             bookRepository.save(book);
 
-            return createApiResponse(HttpStatus.OK, "El libro fue actualizado con éxito.", null);
+            return createApiResponse(HttpStatus.OK, "El libro fue actualizado con éxito.", book);
 
         } catch (NoSuchElementException e) {
             logger.warn("Intento de actualizar un libro inexistente: {}", updateBook.getId());
