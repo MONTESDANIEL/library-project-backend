@@ -1,6 +1,6 @@
 # Library Management System - Microservicio de Libros
 
-Este proyecto es un microservicio para la gestión de libros en una biblioteca. Proporciona operaciones CRUD y manejo de préstamos. Está desarrollado con **Spring Boot** y utiliza **MySQL** como base de datos.
+Este proyecto es un microservicio para la gestión de libros en una biblioteca. Proporciona operaciones CRUD para libros y manejo de préstamos. Está desarrollado con **Spring Boot** y utiliza **MySQL** como base de datos.
 
 ## Tecnologías utilizadas
 
@@ -22,12 +22,26 @@ Antes de ejecutar el microservicio, asegúrese de tener instalados los siguiente
 
 ### 2. Creación de la base de datos
 
-Ejecutar el siguiente script en MySQL para crear la base de datos y su estructura inicial:
+Ejecute el siguiente script en MySQL para crear la base de datos y su estructura inicial:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS library_db;
 USE library_db;
 
+-- TABLA: usuarios
+-- Contiene la información de los usuarios que solicitan préstamos.
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    phone VARCHAR(15),
+    address VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- TABLA: libros
+-- Contiene los libros disponibles en la biblioteca.
 CREATE TABLE books (
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(100) NOT NULL,
@@ -38,23 +52,39 @@ CREATE TABLE books (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- TABLA: prestamos
+-- Registra los préstamos de los libros, enlazando usuarios y libros.
+CREATE TABLE loans (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT NOT NULL,
+    user_id INT NOT NULL,
+    loan_date DATE NOT NULL,
+    return_date DATE NOT NULL,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 ```
 
 ### 3. Configuración de propiedades
 
-El microservicio utiliza **application.properties** para configurar la conexión a la base de datos y otros parámetros. A continuación, se muestra un ejemplo de la configuración:
+El microservicio utiliza el archivo application.properties para configurar la conexión a la base de datos y otros parámetros. A continuación se muestra un ejemplo de la configuración:
 
-```properties
+properties
+Copiar
+Editar
 spring.application.name=library-project
 server.port=8081
 
-# Configuración de la base de datos
+## Configuración de la base de datos
+
+```sh
 spring.datasource.url=jdbc:mysql://localhost:3306/library_db
 spring.datasource.username=root
 spring.datasource.password=admin
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-# Configuración de Hibernate
 spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 spring.jpa.show-sql=true
 ```
@@ -70,58 +100,15 @@ El microservicio expone los siguientes endpoints:
 | PUT    | `/api/book/updateBook`          | Actualiza la información de un libro |
 | DELETE | `/api/book/deleteBook/{bookId}` | Elimina un libro por ID              |
 
-## Implementación del Controlador
-
-Ejemplo de código del controlador para la gestión de libros:
-
-```java
-@Tag(name = "Books", description = "Gestión de libros en la biblioteca")
-@RestController
-@RequestMapping("/api/book")
-@RequiredArgsConstructor
-public class BookController {
-
-    private final BookService bookService;
-
-    @Operation(summary = "Lista todos los libros")
-    @GetMapping("/listAllBooks")
-    public ResponseEntity<?> listAllBooks() {
-        ResponseEntity<?> response = bookService.listAllBooks();
-        return response;
-    }
-
-    @Operation(summary = "Agregar un nuevo libro")
-    @PostMapping("/addBook")
-    public ResponseEntity<?> addBook(@Valid @RequestBody Book newBook) {
-        ResponseEntity<?> response = bookService.addBook(newBook);
-        return response;
-    }
-
-    @Operation(summary = "Actualizar la información de un libro")
-    @PutMapping("/updateBook")
-    public ResponseEntity<?> updateBook(@Valid @RequestBody Book updateBook) {
-        ResponseEntity<?> response = bookService.updateBook(updateBook);
-        return response;
-    }
-
-    @Operation(summary = "Eliminar un libro")
-    @DeleteMapping("/deleteBook/{bookId}")
-    public ResponseEntity<?> deleteBook(@PathVariable Long bookId) {
-        ResponseEntity<?> response = bookService.deleteBook(bookId);
-        return response;
-    }
-}
-```
-
 ## Ejecución del Microservicio
 
-Para ejecutar el microservicio localmente:
+Para ejecutar el microservicio localmente, puedes usar el siguiente comando:
 
 ```sh
 mvn spring-boot:run
 ```
 
-O compilar y ejecutar el `jar`:
+O bien, compilar y ejecutar el jar generado:
 
 ```sh
 mvn clean package
@@ -130,12 +117,6 @@ java -jar target/library-project.jar
 
 ## Documentación con Swagger
 
-Swagger se encuentra habilitado y puede ser accedido desde:
+Swagger está habilitado y puede ser accedido desde la siguiente URL:
 
-```
-http://localhost:8081/swagger-ui.html
-```
-
-## Contacto y Contribución
-
-Si desea contribuir a este proyecto, puede clonar el repositorio y realizar un pull request con sus cambios. Para consultas, contactar al administrador del proyecto.
+http://localhost:8081/swagger-ui/index.html
