@@ -99,6 +99,8 @@ El microservicio expone los siguientes endpoints:
 | POST   | `/api/book/addBook`             | Agrega un nuevo libro                |
 | PUT    | `/api/book/updateBook`          | Actualiza la información de un libro |
 | DELETE | `/api/book/deleteBook/{bookId}` | Elimina un libro por ID              |
+| GET    | `/api/loan/listLoans`           | Listar todos los perstamos           |
+| POST | `/api/loan/createloan`            | Agregar un nuevo prestamo            |
 
 ## Ejecución del Microservicio
 
