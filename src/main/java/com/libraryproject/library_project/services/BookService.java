@@ -59,6 +59,12 @@ public class BookService {
         try {
 
             Book book = bookRepository.findById(updateBook.getId()).get();
+
+            book.setTitle(updateBook.getTitle());
+            book.setAuthor(updateBook.getAuthor());
+            book.setGenre(updateBook.getGenre());
+            book.setAvailability(updateBook.getAvailability());
+
             bookRepository.save(book);
 
             return createApiResponse(HttpStatus.OK, "El libro fue actualizado con éxito.", null);
